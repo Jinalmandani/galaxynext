@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "app": "galaxynext",
+ "autoname": "JOB-IWI-.YY.-.#####",
+ "creation": "2025-08-30 16:27:34.374485",
+ "custom": 1,
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "job_inward_item_section",
+  "product_type",
+  "product_name",
+  "width",
+  "warehouse_name",
+  "unit",
+  "total_pcs",
+  "net_weight",
+  "total_quantity",
+  "rate",
+  "amount",
+  "btn_detail",
+  "job_inward_item_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "job_inward_item_section",
+   "fieldtype": "Section Break",
+   "label": "Job Inward Item "
+  },
+  {
+   "fieldname": "product_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product Type",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Product Name",
+   "options": "Item"
+  },
+  {
+   "fieldname": "width",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Width"
+  },
+  {
+   "fieldname": "warehouse_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Warehouse Name ",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "label": "Unit",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "total_pcs",
+   "fieldtype": "Float",
+   "label": "Total Pcs"
+  },
+  {
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight"
+  },
+  {
+   "fieldname": "total_quantity",
+   "fieldtype": "Float",
+   "label": "Total Quantity"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount"
+  },
+  {
+   "allow_on_submit": 1,
+   "depends_on": "true",
+   "fieldname": "btn_detail",
+   "fieldtype": "Button",
+   "label": "Detail"
+  },
+  {
+   "fieldname": "job_inward_item_details",
+   "fieldtype": "Table",
+   "label": "Job Inward Item Details",
+   "options": "Job Inward Item Detail"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-09-01 12:21:22.859823",
+ "modified_by": "Administrator",
+ "module": "galaxynext",
+ "name": "Job Inward Item",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

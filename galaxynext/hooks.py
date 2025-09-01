@@ -55,3 +55,16 @@ translated_languages = ["en"]
 #     "frappe.widgets.onboarding_widget.get_onboarding_data": "galaxynext.utils.onboarding_widget_override.get_onboarding_widget_data_override",
 #     "frappe.widgets.onboarding_widget.get_step_data": "galaxynext.utils.onboarding_widget_override.override_onboarding_step_data"
 # }
+fixtures = [
+	{
+		"dt":"Client Script",
+		"filters":[["name","in",[
+			"Quantity validation for job inward",
+			"click",
+			"Auto Ganareted",
+			"unit",
+			"Job Inward companywise warehouse",
+			"Job Date"
+	    ]]]
+	}
+]

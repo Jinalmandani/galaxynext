@@ -1,0 +1,219 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "JOB-IHE-.YY.-.#####",
+ "creation": "2025-07-29 15:01:24.581789",
+ "custom": 1,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "jobinward_type",
+  "company",
+  "customer_name",
+  "address",
+  "warehouse_name",
+  "remark",
+  "lr_no",
+  "lr_date",
+  "order_ref_no",
+  "column_break_twat",
+  "jobinward_no",
+  "inward_date",
+  "master",
+  "challan_no",
+  "challan_date",
+  "weaver_name",
+  "vehicle_no",
+  "gstin",
+  "stock_entry_ref",
+  "items_section",
+  "table_duni",
+  "section_break_pvue",
+  "job_inward_item_detail",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Series",
+   "options": "JOB-IHE-.YY.-",
+   "reqd": 1
+  },
+  {
+   "fieldname": "jobinward_type",
+   "fieldtype": "Link",
+   "label": "JobInward Type",
+   "options": "Stock Entry Type"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company ",
+   "options": "Company"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer_name.customer_primary_address",
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "Address"
+  },
+  {
+   "fieldname": "warehouse_name",
+   "fieldtype": "Link",
+   "label": "Warehouse Name",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Data",
+   "label": "Remark"
+  },
+  {
+   "fieldname": "lr_no",
+   "fieldtype": "Data",
+   "label": "LR No"
+  },
+  {
+   "fieldname": "lr_date",
+   "fieldtype": "Date",
+   "label": "LR Date"
+  },
+  {
+   "fieldname": "order_ref_no",
+   "fieldtype": "Data",
+   "label": "Order Ref No"
+  },
+  {
+   "fieldname": "column_break_twat",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "jobinward_no",
+   "fieldtype": "Data",
+   "label": "JobInward No"
+  },
+  {
+   "fieldname": "inward_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Inward Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "master",
+   "fieldtype": "Link",
+   "label": "Master",
+   "options": "Cost Center",
+   "reqd": 1
+  },
+  {
+   "fieldname": "challan_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Challan No"
+  },
+  {
+   "fieldname": "challan_date",
+   "fieldtype": "Date",
+   "label": "Challan Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "weaver_name",
+   "fieldtype": "Link",
+   "label": "Weaver Name",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "vehicle_no",
+   "fieldtype": "Data",
+   "label": "Vehicle No"
+  },
+  {
+   "fetch_from": "customer_name.gstin",
+   "fieldname": "gstin",
+   "fieldtype": "Data",
+   "label": "GSTIN"
+  },
+  {
+   "fieldname": "stock_entry_ref",
+   "fieldtype": "Link",
+   "label": "Stock Entry Ref",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Job Inward Item "
+  },
+  {
+   "fieldname": "table_duni",
+   "fieldtype": "Table",
+   "options": "Job Inward Item"
+  },
+  {
+   "fieldname": "section_break_pvue",
+   "fieldtype": "Section Break",
+   "label": "Job Inward item details"
+  },
+  {
+   "fieldname": "job_inward_item_detail",
+   "fieldtype": "Table",
+   "options": "Job Inward Item Detail"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Job Inward_In-House Job",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-09-01 12:24:42.493486",
+ "modified_by": "Administrator",
+ "module": "galaxynext",
+ "name": "Job Inward_In-House Job",
+ "naming_rule": "Expression (old style)",
+ "nsm_parent_field": "parent_job_inward_in_house_job",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 1
+}
