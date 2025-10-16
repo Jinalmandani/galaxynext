@@ -57,3 +57,4 @@ def get_miscellaneous_options(doctype, txt, searchfield, start, page_len, filter
         ORDER BY value
         LIMIT %s, %s
     """, (trantype, like_txt, like_txt, start, page_len), as_list=True)  # ← as_list=True जरूरी है!
+    

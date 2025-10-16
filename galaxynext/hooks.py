@@ -26,6 +26,9 @@ doc_events = {
 
 
 
+
+
+
 # ===== Desk Customizations =====
 app_include_css = "/assets/galaxynext/css/galaxyerp.css"
 app_include_js = [
@@ -69,6 +72,10 @@ onboarding_steps = {
 # ===== App Logo (Top Left) =====
 app_logo_url = "/assets/galaxynext/images/galaxynext_logo.png"
 
+# ===== App Logo (For App Selector Screen) =====
+app_logo = "/assets/galaxynext/images/Galaxynext.png"
+
+
 # ===== Language Support =====
 translated_languages = ["en"]
 
@@ -91,7 +98,9 @@ fixtures = [
             "lead client script",
             "contract client script",
             "prospect client script",
-	    "GERP client script"
+	        "GERP client script",
+            "fetch item parameter",
+            "Get Original Tab Table detail"
            
 
         ]]]
@@ -99,7 +108,8 @@ fixtures = [
     {
         "dt": "Server Script",
         "filters": [["name", "in", [
-            "job card test server script"
+            "job card test server script",
+            "company event"
         ]]]
     }
 ]
