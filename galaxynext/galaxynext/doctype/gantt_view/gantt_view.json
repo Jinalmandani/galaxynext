@@ -1,0 +1,56 @@
+{
+ "doctype": "DocType",
+ "name": "Gantt View",
+ "module": "galaxynext",
+ "custom": 1,
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "view_name",
+   "label": "View Name",
+   "fieldtype": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "label": "Reference Doctype",
+   "fieldtype": "Link",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "title_field",
+   "label": "Title Field",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "start_date_field",
+   "label": "Start Date Field",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "end_date_field",
+   "label": "End Date Field",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "progress_field",
+   "label": "Progress Field",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "order_by",
+   "label": "Order By",
+   "fieldtype": "Data"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}

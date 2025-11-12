@@ -1,0 +1,31 @@
+{
+ "content": null,
+ "creation": "2025-11-12 15:26:21.197060",
+ "docstatus": 0,
+ "doctype": "page",
+ "idx": 0,
+ "modified": "2025-11-12 15:43:06.210725",
+ "modified_by": "Administrator",
+ "module": "galaxynext",
+ "name": "workstation-gantt",
+ "owner": "Administrator",
+ "page_name": "workstation-gantt",
+ "roles": [
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "Manufacturing Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "route": "workstation-gantt",
+ "title": "Workstation Gantt"
+}
+

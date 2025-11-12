@@ -1,0 +1,842 @@
+<!-- <! <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Order Gantt View</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        * { box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+        
+        const WorkOrderGantt = () => {
+          const [workstations, setWorkstations] = useState([
+            { id: 'ws1', name: 'Workstation A' },
+            { id: 'ws2', name: 'Workstation B' },
+            { id: 'ws3', name: 'Workstation C' },
+            { id: 'ws4', name: 'Workstation D' },
+          ]);
+
+          const [workOrders, setWorkOrders] = useState([
+            { id: 'wo1', name: 'MBOOKS (MFG-WO-2025-00002)', workstationId: 'ws1', startDate: new Date(2025, 9, 15), duration: 5, color: '#3b82f6' },
+            { id: 'wo2', name: 'FINISH-23 (MFG-WO-2025-00004)', workstationId: 'ws1', startDate: new Date(2025, 9, 21), duration: 4, color: '#10b981' },
+            { id: 'wo3', name: 'GERP PRODUCT (MFG-WO-2025-00003)', workstationId: 'ws2', startDate: new Date(2025, 9, 18), duration: 6, color: '#f59e0b' },
+            { id: 'wo4', name: 'CARPET-001 (MFG-WO-2025-00005)', workstationId: 'ws3', startDate: new Date(2025, 9, 20), duration: 4, color: '#ef4444' },
+          ]);
+
+          const [draggedOrder, setDraggedOrder] = useState(null);
+          const [showAddForm, setShowAddForm] = useState(false);
+          const [newOrder, setNewOrder] = useState({ name: '', workstationId: 'ws1', startDate: '', duration: 1 });
+
+          const startDate = new Date(2025, 9, 10);
+          const daysToShow = 30;
+          const dates = Array.from({ length: daysToShow }, (_, i) => {
+            const date = new Date(startDate);
+            date.setDate(date.getDate() + i);
+            return date;
+          });
+
+          const dayWidth = 40;
+
+          const handleDragStart = (e, order) => {
+            setDraggedOrder(order);
+            e.dataTransfer.effectAllowed = 'move';
+          };
+
+          const handleDragOver = (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+          };
+
+          const handleDrop = (e, workstationId, dateIndex) => {
+            e.preventDefault();
+            if (draggedOrder) {
+              const newStartDate = new Date(startDate);
+              newStartDate.setDate(newStartDate.getDate() + dateIndex);
+              setWorkOrders(prev => prev.map(order => 
+                order.id === draggedOrder.id ? { ...order, workstationId, startDate: newStartDate } : order
+              ));
+              setDraggedOrder(null);
+            }
+          };
+
+          const handleResize = (orderId, newDuration) => {
+            setWorkOrders(prev => prev.map(order =>
+              order.id === orderId ? { ...order, duration: Math.max(1, newDuration) } : order
+            ));
+          };
+
+          const handleDelete = (orderId) => {
+            if (confirm('Are you sure you want to delete this work order?')) {
+              setWorkOrders(prev => prev.filter(order => order.id !== orderId));
+            }
+          };
+
+          const handleAddOrder = () => {
+            if (!newOrder.name || !newOrder.startDate) {
+              alert('Please fill in all required fields');
+              return;
+            }
+            const order = {
+              id: `wo${Date.now()}`,
+              name: newOrder.name,
+              workstationId: newOrder.workstationId,
+              startDate: new Date(newOrder.startDate),
+              duration: parseInt(newOrder.duration),
+              color: `#${Math.floor(Math.random()*16777215).toString(16)}`
+            };
+            setWorkOrders([...workOrders, order]);
+            setNewOrder({ name: '', workstationId: 'ws1', startDate: '', duration: 1 });
+            setShowAddForm(false);
+          };
+
+          const getOrderPosition = (order) => {
+            const daysDiff = Math.floor((order.startDate - startDate) / (1000 * 60 * 60 * 24));
+            return daysDiff * dayWidth;
+          };
+
+          const PlusIcon = () => (<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>);
+          const TrashIcon = () => (<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>);
+          const CalendarIcon = () => (<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>);
+
+          return (
+            <div className="w-full h-screen bg-gray-50 flex flex-col">
+              <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <CalendarIcon />
+                  <h1 className="text-2xl font-bold text-gray-800">Work Order Gantt View</h1>
+                </div>
+                <button onClick={() => setShowAddForm(!showAddForm)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <PlusIcon />
+                  Add Work Order
+                </button>
+              </div>
+
+              {showAddForm && (
+                <div className="bg-white border-b border-gray-200 p-4">
+                  <div className="grid grid-cols-5 gap-4">
+                    <input type="text" placeholder="Work Order Name" value={newOrder.name} onChange={(e) => setNewOrder({ ...newOrder, name: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <select value={newOrder.workstationId} onChange={(e) => setNewOrder({ ...newOrder, workstationId: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      {workstations.map(ws => (<option key={ws.id} value={ws.id}>{ws.name}</option>))}
+                    </select>
+                    <input type="date" value={newOrder.startDate} onChange={(e) => setNewOrder({ ...newOrder, startDate: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <input type="number" min="1" placeholder="Duration (days)" value={newOrder.duration} onChange={(e) => setNewOrder({ ...newOrder, duration: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <button onClick={handleAddOrder} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Add</button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex-1 overflow-auto">
+                <div className="flex">
+                  <div className="w-64 bg-white border-r border-gray-200 sticky left-0 z-10">
+                    <div className="h-16 border-b border-gray-200 flex items-center px-4 bg-gray-50 font-semibold text-gray-700">Workstation</div>
+                    {workstations.map(ws => (
+                      <div key={ws.id} className="h-20 border-b border-gray-200 flex items-center px-4 bg-white hover:bg-gray-50 transition-colors">
+                        <span className="font-medium text-gray-800">{ws.name}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="h-16 bg-gray-50 border-b border-gray-200 flex sticky top-0 z-10">
+                      {dates.map((date, i) => (
+                        <div key={i} className="flex-shrink-0 border-r border-gray-200 flex flex-col items-center justify-center" style={{ width: `${dayWidth}px` }}>
+                          <span className="text-xs text-gray-500 font-medium">{date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                          <span className="text-sm font-semibold text-gray-800">{date.getDate()}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {workstations.map(ws => (
+                      <div key={ws.id} className="h-20 border-b border-gray-200 flex relative bg-white" onDragOver={handleDragOver}>
+                        {dates.map((_, dateIndex) => (
+                          <div key={dateIndex} className="flex-shrink-0 border-r border-gray-100 hover:bg-blue-50 transition-colors" style={{ width: `${dayWidth}px` }} onDrop={(e) => handleDrop(e, ws.id, dateIndex)} />
+                        ))}
+                        {workOrders.filter(order => order.workstationId === ws.id).map(order => {
+                          const left = getOrderPosition(order);
+                          const width = order.duration * dayWidth - 4;
+                          return (
+                            <div key={order.id} draggable onDragStart={(e) => handleDragStart(e, order)} className="absolute top-2 rounded-lg shadow-lg cursor-move hover:shadow-xl transition-shadow group" style={{ left: `${left}px`, width: `${width}px`, backgroundColor: order.color }}>
+                              <div className="h-16 px-3 py-2 flex items-center justify-between">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-white truncate">{order.name}</p>
+                                  <p className="text-xs text-white opacity-90">{order.duration} days</p>
+                                </div>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button onClick={() => handleDelete(order.id)} className="p-1 bg-white bg-opacity-20 rounded hover:bg-opacity-30 transition-colors">
+                                    <TrashIcon />
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="absolute right-0 top-0 h-full w-2 cursor-ew-resize hover:bg-white hover:bg-opacity-30" onMouseDown={(e) => {
+                                e.stopPropagation();
+                                const startX = e.clientX;
+                                const startDuration = order.duration;
+                                const handleMouseMove = (e) => {
+                                  const diff = Math.round((e.clientX - startX) / dayWidth);
+                                  handleResize(order.id, startDuration + diff);
+                                };
+                                const handleMouseUp = () => {
+                                  document.removeEventListener('mousemove', handleMouseMove);
+                                  document.removeEventListener('mouseup', handleMouseUp);
+                                };
+                                document.addEventListener('mousemove', handleMouseMove);
+                                document.addEventListener('mouseup', handleMouseUp);
+                              }} />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border-t border-gray-200 p-3 flex items-center gap-6 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                  <span>Drag to move work order</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-blue-500 rounded"></div>
+                  <span>Drag right edge to resize duration</span>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<WorkOrderGantt />, document.getElementById('root'));
+    </script>
+</body>
+</html> -->
+
+ <!-- <!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Order Gantt View</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        * { box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        
+        const WorkOrderGantt = () => {
+          const [viewMode, setViewMode] = useState('gantt');
+          const [workstations, setWorkstations] = useState([
+            { id: 'surat', name: 'surat' },
+            { id: 'Dyeing Unit', name: 'Dyeing Unit' },
+            { id: 'JOB-V-DYEING', name: 'JOB-V-DYEING' },
+            { id: 'JOB-V-FINAL FINISH', name: 'JOB-V-FINAL FINISH' },
+          ]);
+          
+          const [workOrders, setWorkOrders] = useState([
+            { id: 'MFG-WO-2025-00001', name: 'MFG-WO-2025-00001', workstationId: 'surat', startDate: new Date(2025, 9, 15), duration: 5, color: '#3b82f6', bom: 'BOM-001', status: 'In Progress' },
+            { id: 'MFG-WO-2025-00002', name: 'MFG-WO-2025-00002', workstationId: 'Dyeing Unit', startDate: new Date(2025, 9, 18), duration: 6, color: '#10b981', bom: 'BOM-ALMN-001', status: 'Not Started' },
+            { id: 'MFG-WO-2025-00003', name: 'MFG-WO-2025-00003', workstationId: 'JOB-V-DYEING', startDate: new Date(2025, 9, 20), duration: 4, color: '#f59e0b', bom: 'BOM-002', status: 'In Progress' },
+            { id: 'MFG-WO-2025-00004', name: 'MFG-WO-2025-00004', workstationId: 'JOB-V-FINAL FINISH', startDate: new Date(2025, 9, 22), duration: 7, color: '#ef4444', bom: 'BOM-003', status: 'Not Started' },
+            { id: 'MFG-WO-2025-00005', name: 'MFG-WO-2025-00005', workstationId: 'Dyeing Unit', startDate: new Date(2025, 9, 25), duration: 3, color: '#8b5cf6', bom: 'BOM-ALMN-001', status: 'In Progress' },
+          ]);
+          
+          const [loading, setLoading] = useState(true);
+          const [draggedOrder, setDraggedOrder] = useState(null);
+          const [showAddForm, setShowAddForm] = useState(false);
+          const [newOrder, setNewOrder] = useState({
+            name: '',
+            workstationId: 'surat',
+            startDate: '',
+            duration: 1,
+            bom: '',
+          });
+
+          const startDate = new Date(2025, 9, 10);
+          const daysToShow = 30;
+          const dates = Array.from({ length: daysToShow }, (_, i) => {
+            const date = new Date(startDate);
+            date.setDate(date.getDate() + i);
+            return date;
+          });
+
+          const dayWidth = 40;
+
+          useEffect(() => {
+            // Try to fetch real data, but use sample data if fails
+            fetchData();
+          }, []);
+
+          const fetchData = async () => {
+            try {
+              // Fetch workstations
+              const wsResponse = await fetch('/api/method/frappe.desk.reportview.get?doctype=Workstation&fields=["name"]&limit_page_length=999');
+              const wsData = await wsResponse.json();
+              
+              if (wsData.message && wsData.message.values) {
+                const stations = wsData.message.values.map(ws => ({
+                  id: ws[0],
+                  name: ws[0]
+                }));
+                if (stations.length > 0) {
+                  setWorkstations(stations);
+                  setNewOrder(prev => ({ ...prev, workstationId: stations[0].id }));
+                }
+              }
+
+              // Fetch work orders
+              const woResponse = await fetch('/api/method/frappe.desk.reportview.get?doctype=Work Order&fields=["name","workstation","planned_start_date","bom_no","status"]&limit_page_length=50');
+              const woData = await woResponse.json();
+              
+              if (woData.message && woData.message.values) {
+                const orders = woData.message.values.map(wo => {
+                  const startDate = wo[2] ? new Date(wo[2]) : new Date();
+                  return {
+                    id: wo[0],
+                    name: wo[0],
+                    workstationId: wo[1] || 'Dyeing Unit',
+                    startDate: startDate,
+                    duration: 5,
+                    color: getRandomColor(),
+                    bom: wo[3] || '',
+                    status: wo[4] || 'Not Started'
+                  };
+                });
+                
+                if (orders.length > 0) {
+                  setWorkOrders(orders);
+                }
+              }
+            } catch (error) {
+              console.log('Using sample data:', error);
+            } finally {
+              setLoading(false);
+            }
+          };
+
+          const getRandomColor = () => {
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#06b6d4'];
+            return colors[Math.floor(Math.random() * colors.length)];
+          };
+
+          // API Helper Functions
+          const updateWorkOrder = async (workOrderId, data) => {
+            const response = await fetch(`/api/resource/Work Order/${workOrderId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token || ''
+              },
+              body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to update work order');
+            }
+            
+            return await response.json();
+          };
+
+          const deleteWorkOrder = async (workOrderId) => {
+            const response = await fetch(`/api/resource/Work Order/${workOrderId}`, {
+              method: 'DELETE',
+              headers: {
+                'X-Frappe-CSRF-Token': frappe.csrf_token || ''
+              }
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to delete work order');
+            }
+            
+            return await response.json();
+          };
+
+          const createWorkOrder = async (data) => {
+            const response = await fetch('/api/resource/Work Order', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token || ''
+              },
+              body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to create work order');
+            }
+            
+            return await response.json();
+          };
+
+          const handleDragStart = (e, order) => {
+            setDraggedOrder(order);
+            e.dataTransfer.effectAllowed = 'move';
+          };
+
+          const handleDragOver = (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+          };
+
+          const handleDrop = async (e, workstationId, dateIndex) => {
+            e.preventDefault();
+            if (draggedOrder) {
+              const newStartDate = new Date(startDate);
+              newStartDate.setDate(newStartDate.getDate() + dateIndex);
+              
+              // Update in local state
+              setWorkOrders(prev => prev.map(order => 
+                order.id === draggedOrder.id 
+                  ? { ...order, workstationId, startDate: newStartDate }
+                  : order
+              ));
+              
+              // Update in ERPNext
+              try {
+                await updateWorkOrder(draggedOrder.id, {
+                  workstation: workstationId,
+                  planned_start_date: newStartDate.toISOString().split('T')[0]
+                });
+                console.log('Work Order updated successfully');
+              } catch (error) {
+                console.error('Failed to update work order:', error);
+                alert('Failed to update work order in ERPNext');
+              }
+              
+              setDraggedOrder(null);
+            }
+          };
+
+          const handleResize = async (orderId, newDuration) => {
+            const order = workOrders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            // Update in local state
+            setWorkOrders(prev => prev.map(order =>
+              order.id === orderId ? { ...order, duration: Math.max(1, newDuration) } : order
+            ));
+            
+            // Calculate new end date
+            const endDate = new Date(order.startDate);
+            endDate.setDate(endDate.getDate() + Math.max(1, newDuration));
+            
+            // Update in ERPNext
+            try {
+              await updateWorkOrder(orderId, {
+                planned_end_date: endDate.toISOString().split('T')[0]
+              });
+              console.log('Work Order duration updated');
+            } catch (error) {
+              console.error('Failed to update duration:', error);
+            }
+          };
+
+          const handleDelete = async (orderId) => {
+            if (!confirm('Are you sure you want to delete this work order?')) return;
+            
+            // Remove from local state
+            setWorkOrders(prev => prev.filter(order => order.id !== orderId));
+            
+            // Delete from ERPNext
+            try {
+              await deleteWorkOrder(orderId);
+              console.log('Work Order deleted successfully');
+            } catch (error) {
+              console.error('Failed to delete work order:', error);
+              alert('Failed to delete work order from ERPNext. It has been removed from view only.');
+            }
+          };
+
+          const handleAddOrder = async () => {
+            if (!newOrder.name || !newOrder.startDate) {
+              alert('Please fill Work Order Name and Start Date');
+              return;
+            }
+            
+            const order = {
+              id: newOrder.name,
+              name: newOrder.name,
+              workstationId: newOrder.workstationId,
+              startDate: new Date(newOrder.startDate),
+              duration: parseInt(newOrder.duration),
+              color: getRandomColor(),
+              bom: newOrder.bom,
+              status: 'Not Started'
+            };
+            
+            // Add to local state
+            setWorkOrders([...workOrders, order]);
+            
+            // Create in ERPNext (optional - uncomment if you want to create actual work orders)
+            /*
+            try {
+              const endDate = new Date(order.startDate);
+              endDate.setDate(endDate.getDate() + order.duration);
+              
+              await createWorkOrder({
+                doctype: 'Work Order',
+                name: order.name,
+                workstation: order.workstationId,
+                planned_start_date: order.startDate.toISOString().split('T')[0],
+                planned_end_date: endDate.toISOString().split('T')[0],
+                bom_no: order.bom || '',
+                status: 'Not Started'
+              });
+              
+              console.log('Work Order created successfully');
+            } catch (error) {
+              console.error('Failed to create work order:', error);
+              alert('Work Order added to view but failed to save in ERPNext');
+            }
+            */
+            
+            setNewOrder({ name: '', workstationId: workstations[0]?.id || '', startDate: '', duration: 1, bom: '' });
+            setShowAddForm(false);
+          };
+
+          const getOrderPosition = (order) => {
+            const daysDiff = Math.floor((order.startDate - startDate) / (1000 * 60 * 60 * 24));
+            return daysDiff * dayWidth;
+          };
+
+          const PlusIcon = () => (<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>);
+          const TrashIcon = () => (<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>);
+          const CalendarIcon = () => (<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>);
+          const GridIcon = () => (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>);
+          const ChartIcon = () => (<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>);
+          const RefreshIcon = () => (<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>);
+
+          if (loading) {
+            return (
+              <div className="w-full h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                  <p className="mt-4 text-gray-600">Loading Work Orders...</p>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="w-full h-screen bg-gray-50 flex flex-col">
+              {/* Header */}
+              <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <CalendarIcon />
+                  <h1 className="text-2xl font-bold text-gray-800">Work Order Gantt View</h1>
+                </div>
+                <div className="flex items-center gap-3">
+                  {/* Refresh Button */}
+                  <button
+                    onClick={fetchData}
+                    className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    title="Refresh Data"
+                  >
+                    <RefreshIcon />
+                  </button>
+                  
+                  {/* View Toggle */}
+                  <div className="flex bg-gray-100 rounded-lg p-1">
+                    <button
+                      onClick={() => setViewMode('gantt')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                        viewMode === 'gantt' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600'
+                      }`}
+                    >
+                      <ChartIcon />
+                      Gantt
+                    </button>
+                    <button
+                      onClick={() => setViewMode('calendar')}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                        viewMode === 'calendar' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-600'
+                      }`}
+                    >
+                      <GridIcon />
+                      Calendar
+                    </button>
+                  </div>
+                  
+                  <button
+                    onClick={() => setShowAddForm(!showAddForm)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <PlusIcon />
+                    Add Work Order
+                  </button>
+                </div>
+              </div>
+
+              {/* Add Form */}
+              {showAddForm && (
+                <div className="bg-white border-b border-gray-200 p-4">
+                  <div className="grid grid-cols-6 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Work Order Name (e.g. MFG-WO-2025-00006)"
+                      value={newOrder.name}
+                      onChange={(e) => setNewOrder({ ...newOrder, name: e.target.value })}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <select
+                      value={newOrder.workstationId}
+                      onChange={(e) => setNewOrder({ ...newOrder, workstationId: e.target.value })}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      {workstations.map(ws => (
+                        <option key={ws.id} value={ws.id}>{ws.name}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="BOM (optional)"
+                      value={newOrder.bom}
+                      onChange={(e) => setNewOrder({ ...newOrder, bom: e.target.value })}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <input
+                      type="date"
+                      value={newOrder.startDate}
+                      onChange={(e) => setNewOrder({ ...newOrder, startDate: e.target.value })}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="Duration (days)"
+                      value={newOrder.duration}
+                      onChange={(e) => setNewOrder({ ...newOrder, duration: e.target.value })}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <button
+                      onClick={handleAddOrder}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Main Content */}
+              {viewMode === 'gantt' ? (
+                // Gantt View
+                <div className="flex-1 overflow-auto">
+                  <div className="flex">
+                    {/* Workstations Column */}
+                    <div className="w-64 bg-white border-r border-gray-200 sticky left-0 z-10">
+                      <div className="h-16 border-b border-gray-200 flex items-center px-4 bg-gray-50 font-semibold text-gray-700">
+                        Workstation
+                      </div>
+                      {workstations.map(ws => (
+                        <div
+                          key={ws.id}
+                          className="h-20 border-b border-gray-200 flex items-center px-4 bg-white hover:bg-gray-50 transition-colors"
+                        >
+                          <span className="font-medium text-gray-800">{ws.name}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Timeline */}
+                    <div className="flex-1">
+                      {/* Date Headers */}
+                      <div className="h-16 bg-gray-50 border-b border-gray-200 flex sticky top-0 z-10">
+                        {dates.map((date, i) => (
+                          <div
+                            key={i}
+                            className="flex-shrink-0 border-r border-gray-200 flex flex-col items-center justify-center"
+                            style={{ width: `${dayWidth}px` }}
+                          >
+                            <span className="text-xs text-gray-500 font-medium">
+                              {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                            </span>
+                            <span className="text-sm font-semibold text-gray-800">
+                              {date.getDate()}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Workstation Rows */}
+                      {workstations.map(ws => (
+                        <div
+                          key={ws.id}
+                          className="h-20 border-b border-gray-200 flex relative bg-white"
+                          onDragOver={handleDragOver}
+                        >
+                          {dates.map((_, dateIndex) => (
+                            <div
+                              key={dateIndex}
+                              className="flex-shrink-0 border-r border-gray-100 hover:bg-blue-50 transition-colors"
+                              style={{ width: `${dayWidth}px` }}
+                              onDrop={(e) => handleDrop(e, ws.id, dateIndex)}
+                            />
+                          ))}
+
+                          {/* Work Orders */}
+                          {workOrders
+                            .filter(order => order.workstationId === ws.id)
+                            .map(order => {
+                              const left = getOrderPosition(order);
+                              const width = order.duration * dayWidth - 4;
+                              
+                              if (left < 0 || left > daysToShow * dayWidth) return null;
+                              
+                              return (
+                                <div
+                                  key={order.id}
+                                  draggable
+                                  onDragStart={(e) => handleDragStart(e, order)}
+                                  className="absolute top-2 rounded-lg shadow-lg cursor-move hover:shadow-xl transition-shadow group"
+                                  style={{
+                                    left: `${left}px`,
+                                    width: `${width}px`,
+                                    backgroundColor: order.color,
+                                  }}
+                                >
+                                  <div className="h-16 px-3 py-2 flex items-center justify-between">
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-semibold text-white truncate">
+                                        {order.name}
+                                      </p>
+                                      <p className="text-xs text-white opacity-90">
+                                        {order.duration} days
+                                      </p>
+                                    </div>
+                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <button
+                                        onClick={() => handleDelete(order.id)}
+                                        className="p-1 bg-white bg-opacity-20 rounded hover:bg-opacity-30 transition-colors"
+                                      >
+                                        <TrashIcon />
+                                      </button>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Resize Handle */}
+                                  <div
+                                    className="absolute right-0 top-0 h-full w-2 cursor-ew-resize hover:bg-white hover:bg-opacity-30"
+                                    onMouseDown={(e) => {
+                                      e.stopPropagation();
+                                      const startX = e.clientX;
+                                      const startDuration = order.duration;
+                                      
+                                      const handleMouseMove = (e) => {
+                                        const diff = Math.round((e.clientX - startX) / dayWidth);
+                                        handleResize(order.id, startDuration + diff);
+                                      };
+                                      
+                                      const handleMouseUp = () => {
+                                        document.removeEventListener('mousemove', handleMouseMove);
+                                        document.removeEventListener('mouseup', handleMouseUp);
+                                      };
+                                      
+                                      document.addEventListener('mousemove', handleMouseMove);
+                                      document.addEventListener('mouseup', handleMouseUp);
+                                    }}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Calendar View
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="bg-white rounded-lg shadow">
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Work Order</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">BOM</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workstation</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {workOrders.map(order => (
+                          <tr key={order.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.bom || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.workstationId}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {order.startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.duration} days</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                order.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : 
+                                order.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {order.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button
+                                onClick={() => handleDelete(order.id)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Footer / Legend */}
+              <div className="bg-white border-t border-gray-200 p-3 flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                    <span>Drag to move work order</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-blue-500 rounded"></div>
+                    <span>Drag right edge to resize duration</span>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-500">
+                  Total Work Orders: {workOrders.length} | Workstations: {workstations.length}
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<WorkOrderGantt />, document.getElementById('root'));
+    </script>
+</body>
+</html>
+
+
+
+ --> -->

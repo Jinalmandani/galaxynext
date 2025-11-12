@@ -1,0 +1,190 @@
+/* File Path: galaxynext/galaxynext/page/work_order_gantt/work_order_gantt.css */
+
+.gantt-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#gantt-chart {
+    min-height: 400px;
+}
+
+/* Custom colors for different statuses */
+.gantt .bar-draft {
+    fill: #98d85b !important;
+}
+
+.gantt .bar-not-started {
+    fill: #ffa00a !important;
+}
+
+.gantt .bar-in-process {
+    fill: #5e64ff !important;
+}
+
+.gantt .bar-completed {
+    fill: #2ecc71 !important;
+}
+
+.gantt .bar-stopped {
+    fill: #e74c3c !important;
+}
+
+.gantt .bar-default {
+    fill: #a8a8a8 !important;
+}
+
+/* Workstation specific colors */
+.gantt .dyeing-unit {
+    fill: #3498db !important;
+}
+
+.gantt .job-v-dyeing {
+    fill: #9b59b6 !important;
+}
+
+.gantt .job-v-final-finish {
+    fill: #e67e22 !important;
+}
+
+/* Hover effects */
+.gantt .bar-wrapper:hover .bar {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+/* Popup styling */
+.gantt .popup-wrapper {
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.gantt .popup-wrapper .details-container {
+    padding: 15px;
+}
+
+.gantt .popup-wrapper h5 {
+    margin: 0 0 10px 0;
+    padding: 10px 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+}
+
+.gantt .popup-wrapper p {
+    margin: 5px 0;
+    font-size: 13px;
+}
+
+/* Grid styling */
+.gantt .grid-header {
+    fill: #f5f5f5;
+    stroke: #e0e0e0;
+}
+
+.gantt .grid-row {
+    fill: transparent;
+}
+
+.gantt .grid-row:nth-child(even) {
+    fill: #fafafa;
+}
+
+.gantt .row-line {
+    stroke: #ebeff2;
+}
+
+.gantt .tick {
+    stroke: #e0e0e0;
+}
+
+.gantt .tick.thick {
+    stroke: #c0c0c0;
+}
+
+/* Today line */
+.gantt .today-highlight {
+    fill: rgba(255, 193, 7, 0.1);
+    stroke: #ffc107;
+    stroke-width: 1;
+}
+
+/* Resize handles */
+.gantt .handle {
+    fill: #ddd;
+    cursor: ew-resize;
+    opacity: 0;
+}
+
+.gantt .bar-wrapper:hover .handle {
+    opacity: 1;
+}
+
+/* Arrow connections */
+.gantt .arrow {
+    stroke: #666;
+    stroke-width: 1.4;
+    fill: none;
+}
+
+/* Legend styling */
+.gantt-legend {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.gantt-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.gantt-legend-color {
+    width: 20px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .gantt-container {
+        padding: 10px;
+    }
+    
+    .gantt .bar-label {
+        font-size: 11px;
+    }
+}
+
+/* Loading state */
+.gantt-loading {
+    text-align: center;
+    padding: 50px;
+    color: #999;
+}
+
+.gantt-loading i {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+/* Filter section */
+.page-head .standard-filter-section {
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}

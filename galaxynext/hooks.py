@@ -11,6 +11,45 @@ override_whitelisted_methods = {
     "galaxynext.api.get_miscellaneous_options": "galaxynext.api.get_miscellaneous_options"
 }
 
+app_include_js = [
+    "/assets/galaxynext/js/workstation_gantt.js"
+]
+
+
+# અગાઉની imports નીચે add કરો
+
+# app_include_js = [
+#     "/assets/galaxynext/js/work_order.js"
+# ]
+# app_include_js = [
+#     "/assets/galaxynext/js/workstation_calendar.js"
+# ]
+
+# page_js = {
+#     "workstation-calendar": "public/js/workstation_calendar.js"
+# }
+
+
+# app_include_js = ["/assets/galaxynext/js/work_order_gantt.js"]
+# doctype_js = {
+#     "Work Order": "public/js/work_order_gantt.js"
+# }
+
+
+# app_include_js = ["/assets/galaxynext/js/work_order_gantt.js"]
+
+# app_include_js = [
+#     "/assets/galaxynext/js/work_order_gantt_custom.js"
+# ]
+
+
+# app_include_js = ["/assets/galaxynext/js/work_order_gantt.js"]
+
+override_whitelisted_methods = {
+    "erpnext.manufacturing.doctype.work_order.work_order.get_events": 
+        "galaxynext.overrides.work_order_gantt.get_work_order_gantt_data"
+}
+
 
 # Hook into document events for Item
 doc_events = {
@@ -25,17 +64,70 @@ doc_events = {
 }
 
 
-
-
-
-
 # ===== Desk Customizations =====
 app_include_css = "/assets/galaxynext/css/galaxyerp.css"
 app_include_js = [
     "/assets/galaxynext/js/galaxyerp.js",
     "/assets/galaxynext/js/custom_about.js",
-    "/assets/galaxynext/js/toolbar/help_dropdown.js"  # ✅ Custom Help Dropdown JS
+    "/assets/galaxynext/js/toolbar/help_dropdown.js"# ✅ Custom Help Dropdown JS
+  
+    
+
 ]
+# app_include_js = [
+#     "/assets/galaxynext/js/work_order_gantt_override.js"
+# ]
+
+
+
+# page_js = {
+#     "work-order-gantt": [
+#         "public/js/lib/frappe-gantt/frappe-gantt.min.js"
+#     ]
+# }
+
+# page_css = {
+#     "work-order-gantt": [
+#         "public/css/work_order_gantt.css"
+#     ]
+# }
+# # page_js = {
+#     "work-order-gantt": "public/js/work_order_gantt_custom.js"
+# }
+
+
+# doctype_js = {
+#     "Work Order": "public/js/work_order_gantt.js"
+# }
+
+
+# doc_events = {
+#     "Work Order": {
+#         "on_update": "galaxynext.galaxynext.page.work_order_gantt.work_order_gantt.clear_cache",
+#         "on_trash": "galaxynext.galaxynext.page.work_order_gantt.work_order_gantt.clear_cache",
+#         "on_submit": "galaxynext.galaxynext.page.work_order_gantt.work_order_gantt.clear_cache",
+#         "on_cancel": "galaxynext.galaxynext.page.work_order_gantt.work_order_gantt.clear_cache"
+#     }
+# }
+
+# doctype_js = {
+#     "Work Order": "public/js/work_order_list.js"
+# }
+
+
+# # App-wide JS files
+# app_include_js = [
+#     "/assets/galaxynext/js/work_order_gantt_redirect.js"
+# ]
+
+# # OR use doctype_js:
+# doctype_js = {
+#     "Work Order": [
+#         "public/js/work_order_gantt_redirect.js"
+#     ]
+# }
+# # on_boot = "galaxynext.override.override_boot"
+
 
 # ===== Web Templates Customizations =====
 web_include_css = "/assets/galaxynext/css/galaxyerp.css"
