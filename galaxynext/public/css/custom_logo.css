@@ -1,0 +1,22 @@
+/* ✅ Login Page Logo
+.page-card-head img {
+    content: url("/assets/galaxynext/images/Galaxylogo.png"); 
+    max-height: 80px;
+}
+
+
+.navbar-home img {
+    content: url("/assets/galaxynext/images/Galaxylogo.png");
+    max-height: 30px;
+}
+
+.sidebar-logo {
+    content: url("/assets/galaxynext/images/Galaxylogo.png");
+    max-height: 30px;
+    padding: 4px;
+}
+
+.app-loading .loading-image {
+    content: url("/assets/galaxynext/images/Galaxylogo.png");
+    max-height: 80px;
+} */

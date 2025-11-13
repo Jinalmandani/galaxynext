@@ -1,0 +1,17 @@
+{
+  "title": "Create an Item",
+  "description": "# Create an Item\n\nItem is a product or a service offered by your company, or something you buy as a part of your supplies or raw materials.\n\nItems are integral to everything you do in GalaxyNext - from billing, purchasing to managing inventory. Everything you buy or sell, whether it is a physical product or a service is an Item. Items can be stock, non-stock, variants, serialized, batched, assets, etc.",
+  "success": "Item Created Successfully",
+  "actions": [
+    {
+      "type": "create_new",
+      "label": "Create a new Item",
+      "doctype": "Item"
+    },
+    {
+      "type": "show_list",
+      "label": "Show Item List",
+      "doctype": "Item"
+    }
+  ]
+}
