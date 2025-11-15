@@ -5,12 +5,25 @@ app_description = "text change"
 app_email = "khushim@gmail.com"
 app_license = "mit"
 
+#it;s for item_parameter
+doc_events = {
+    "Item": {
+        # Before save → update fields
+        "before_save": "galaxynext.item_hooks.update_item_fields",
+
+        # After save → rename if needed
+        "after_insert": "galaxynext.item_hooks.rename_item_after_save",
+        "on_update": "galaxynext.item_hooks.rename_item_after_save",
+    }
+}
+
 # ===== Desk Customizations =====
 app_include_css = "/assets/galaxynext/css/galaxyerp.css"
 app_include_js = [
     "/assets/galaxynext/js/galaxyerp.js",
     "/assets/galaxynext/js/custom_about.js",
-    "/assets/galaxynext/js/toolbar/help_dropdown.js"  # ✅ Custom Help Dropdown JS
+    "/assets/galaxynext/js/toolbar/help_dropdown.js",
+    "/assets/galaxynext/js/override_grid_row.js"  # ✅ Custom Help Dropdown JS
 ]
 
 # ===== Web Templates Customizations =====
@@ -56,11 +69,18 @@ override_whitelisted_methods = {
     "frappe.desk.utils.get_help_links": "galaxynext.utils.custom_toolbar.get_help_links"
 }
 
+
+
 # ==== (Optional future use) Other Overrides Example ====
 # override_whitelisted_methods.update({
 #     "frappe.widgets.onboarding_widget.get_onboarding_data": "galaxynext.utils.onboarding_widget_override.get_onboarding_widget_data_override",
 #     "frappe.widgets.onboarding_widget.get_step_data": "galaxynext.utils.onboarding_widget_override.override_onboarding_step_data"
 # })
+# website_redirects = [
+#     {"source": "/bom/<path:app_path>", "target": "/app/bom/<path:app_path>"}
+# ]
+
+
 
 fixtures = [
     {
@@ -83,6 +103,17 @@ fixtures = [
         "dt": "Server Script",
         "filters": [["name", "in", [
             "job card test server script"
+        ]]]
+    },
+    {
+        "dt": "Print Format",
+        "filters": [["name", "in", [
+            "Order Sheet", 
+            "Design Import",
+            "Sale Order Production Detail",
+            "Job Card",
+            "Work Order",
+            "Patodia Exports"
         ]]]
     }
 ]
