@@ -1,0 +1,21 @@
+[
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Save",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2025-09-04 17:42:35.811229",
+  "module": null,
+  "name": "itemcode_edit_tab",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": "Item",
+  "script": "# # Server Script: Item Auto Code Generator\n# # Doctype: Item\n# # Event: Before Save\n\n# parts = []\n\n# # Add Item Name\n# if doc.item_name:\n#     parts.append(doc.item_name.strip().upper())\n\n# # Add custom parameters\n# if doc.custom_item_parameters:\n#     for row in doc.custom_item_parameters:\n#         if row.value:\n#             parts.append(row.value.strip().upper())\n\n# # Final Code\n# new_code = \"-\".join(parts)\n\n# # Update fields\n# doc.item_code = new_code\n# doc.description = new_code\n\n# # If Item Name blank then set from code\n# if not doc.item_name:\n#     doc.item_name = new_code\n\n# ------------------------------------------------------------------------\n\n# Server Script: Item Auto Code Generator\n# Doctype: Item\n# Event: Before Save\n\nparts = []\n\n# Add Item Name\nif doc.item_name:\n    parts.append(doc.item_name.strip().upper())\n\n# Add custom parameters\nif doc.custom_item_parameters:\n    for row in doc.custom_item_parameters:\n        if row.value:\n            parts.append(row.value.strip().upper())\n\n# Final Code\nnew_code = \"-\".join(parts)\n\nif new_code:\n    # Update fields\n    doc.item_code = new_code\n    doc.description = new_code\n\n    if not doc.item_name:\n        doc.item_name = new_code\n\n    # ✅ Auto-fill Barcode (first row only)\n    if doc.barcodes and len(doc.barcodes) > 0:\n        doc.barcodes[0].barcode = new_code\n\n\n\n\n# ===============================================================================\n\n# # Build the new item_code from child table\n# parts = []\n# for row in doc.custom_item_parameters or []:\n#     if row.value:\n#         parts.append(row.value.strip().upper())\n\n# new_code = \"-\".join(parts)\n\n# # Update item_code field\n# doc.item_code = new_code\n\n# # Update description field also\n# doc.description = new_code\n\n# # Optional: also update item_name if blank\n# if not doc.item_name:\n#     doc.item_name = new_code\n\n# # If you want to also rename the document's name (primary key)\n# if doc.name != new_code:\n#     frappe.rename_doc(\"Item\", doc.name, new_code, force=True)\n\n",
+  "script_type": "DocType Event"
+ }
+]

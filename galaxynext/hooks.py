@@ -1,9 +1,60 @@
+
 app_name = "galaxynext"
 app_title = "galaxynext"
 app_publisher = "khushi"
 app_description = "text change"
 app_email = "khushim@gmail.com"
 app_license = "mit"
+    
+app_include_js = "/assets/galaxynext/js/custom_about.js"
+
+# patches = [
+#     "galaxynext.patches.add_number_of_prints_cf"
+# ]
+
+# it's for custom hooks, you can add your own hooks here ---
+
+# doc_events = {
+#     "Item": {
+#         "validate": "galaxynext.item_hooks.update_item_fields",
+#         "on_update": "galaxynext.item_hooks.rename_item_after_save"
+#     }
+# }
+ 
+# hooks.py
+
+doc_events = {
+    "Item": {
+        # Before save → update fields
+        "before_save": "galaxynext.item_hooks.update_item_fields",
+
+        # After save → rename if needed
+        "after_insert": "galaxynext.item_hooks.rename_item_after_save",
+        "on_update": "galaxynext.item_hooks.rename_item_after_save",
+    }
+}
+
+# -------------------------------------
+  
+fixtures = [
+    {
+        "dt": "Client Script",
+        "filters": [["name", "in", [
+            "Item Group - Default Parameter Row",
+            "12_08_item-parameter",
+            "ItemCode_to_Description",
+            "Hide_Add_Row_Tab",
+	    "Trantype-E_D"
+        ]]]
+    },
+    {
+        "dt": "Server Script",
+        "filters": [["name", "in", [
+            "itemcode_edit_tab"
+        ]]]
+    }
+]
+
 
 # Include custom JS and CSS in Desk
 app_include_css = "/assets/galaxynext/css/galaxyerp.css"
