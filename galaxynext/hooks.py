@@ -7,6 +7,24 @@ app_license = "mit"
 
 # Include custom JS and CSS in Desk
 app_include_css = "/assets/galaxynext/css/galaxyerp.css"
+
+override_whitelisted_methods = {
+    "galaxynext.api.get_miscellaneous_options": "galaxynext.api.get_miscellaneous_options"
+}
+
+
+# Hook into document events for Item
+doc_events = {
+    "Item": {
+        # Before save → update fields
+        "before_save": "galaxynext.item_hooks.update_item_fields",
+
+        # After save → rename if needed
+        "after_insert": "galaxynext.item_hooks.rename_item_after_save",
+        "on_update": "galaxynext.item_hooks.rename_item_after_save",
+    }
+}
+
 app_include_js = [
     "/assets/galaxynext/js/galaxyerp.js",
     "/assets/galaxynext/js/custom_about.js"
@@ -47,6 +65,10 @@ onboarding_steps = {
 # App logo for top left corner
 app_logo_url = "/assets/galaxynext/images/galaxynext_logo.png"
 
+
+
+
+
 # ✅ Add this line for translation override:
 translated_languages = ["en"]
 
@@ -66,5 +88,22 @@ fixtures = [
 			"Job Inward companywise warehouse",
 			"Job Date"
 	    ]]]
-	}
+	},
+    {
+        "dt": "Custom Field",
+        "filters": [["dt", "in", [
+            "Sales Order",
+            "Item",
+            "Item Group"
+        ]]]
+    },
+    {
+        "dt": "Property Setter",
+        "filters": [["doc_type", "in", [
+            "Sales Order",
+            "Item",
+            "Item Group"
+        ]]]
+    }
+
 ]

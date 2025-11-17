@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-09-13 14:24:51.829900",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "parameter",
+  "parameter_data",
+  "status"
+ ],
+ "fields": [
+  {
+   "fetch_from": "misc_name.trantypename",
+   "fieldname": "parameter",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Parameter",
+   "options": "MiscellaneousMst",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Enabled\nDisabled",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parameter_data",
+   "fieldtype": "Data",
+   "label": "Data"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-09-17 12:53:57.430442",
+ "modified_by": "Administrator",
+ "module": "galaxynext",
+ "name": "Item Group Parameter",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
